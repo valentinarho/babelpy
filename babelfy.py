@@ -1,13 +1,15 @@
 #!/usr/bin/python
 
-import urllib2
-import urllib
-import json
 import gzip
-from StringIO import StringIO
-from itertools import product, ifilterfalse
+import json
+import urllib.error
+import urllib.parse
+import urllib.request
+from io import StringIO
+from itertools import product, filterfalse
 from operator import itemgetter
-from config.config import BABELFY_API_URL
+
+from .config.config import BABELFY_API_URL
 
 
 class BabelfyClient(object):
@@ -81,16 +83,15 @@ class BabelfyClient(object):
         params = params or self._params
         params['key'] = self._api_key
         params['text'] = self._text
-        if isinstance(params['text'], unicode):
+        if isinstance(params['text'], str):
             params['text'] = params['text'].encode('utf-8')
-        url = BABELFY_API_URL + '?' + urllib.urlencode(params)
+        url = BABELFY_API_URL + '?' + urllib.parse.urlencode(params)
 
-        request = urllib2.Request(url)
+        request = urllib.request.Request(url)
         request.add_header('Accept-encoding', 'gzip')
-        response = urllib2.urlopen(request)
-        buf = StringIO(response.read())
-        f = gzip.GzipFile(fileobj=buf)
-        self._data = json.loads(f.read())
+        response = urllib.request.urlopen(request)
+        response = gzip.decompress(response.read())
+        self._data = json.loads(response.decode())
 
     def _parse_entities(self):
         """enrich the babelfied data with the text an the isEntity items
@@ -103,11 +104,11 @@ class BabelfyClient(object):
             char_fragment = result.get('charFragment')
             start = char_fragment.get('start')
             end = char_fragment.get('end')
-            entity[u'start'] = start
-            entity[u'end'] = end
-            entity[u'text'] = unicode(self._text[start: end+1])
-            entity[u'isEntity'] = True
-            for key, value in result.items():
+            entity['start'] = start
+            entity['end'] = end
+            entity['text'] = str(self._text[start: end + 1])
+            entity['isEntity'] = True
+            for key, value in list(result.items()):
                 entity[key] = value
             entities.append(entity)
         self._entities = entities
@@ -116,6 +117,7 @@ class BabelfyClient(object):
         """create data for all non-entities in the babelfied text
         set self._all_entities with merged entity and non-entity data
         """
+
         def _differ(tokens):
             inner, outer = tokens
             not_same_start = inner.get('start') != outer.get('start')
@@ -181,7 +183,7 @@ class BabelfyClient(object):
     def _parse_merged_entities(self):
         """set self._merged_entities to the longest possible(wrapping) tokens
         """
-        self._merged_entities = list(ifilterfalse(
+        self._merged_entities = list(filterfalse(
             lambda token: self._is_wrapped(token, self.entities),
             self.entities))
 
@@ -189,13 +191,14 @@ class BabelfyClient(object):
         """set self._all_merged_entities to the longest possible(wrapping)
         tokens including non-entity tokens
         """
-        self._all_merged_entities = list(ifilterfalse(
+        self._all_merged_entities = list(filterfalse(
             lambda token: self._is_wrapped(token, self.all_entities),
             self.all_entities))
 
     def _wraps(self, tokens):
         """determine if a token is wrapped by another token
         """
+
         def _differ(tokens):
             inner, outer = tokens
             not_same_start = inner.get('start') != outer.get('start')
@@ -205,9 +208,9 @@ class BabelfyClient(object):
         def _in_range(tokens):
             inner, outer = tokens
             starts_in = outer.get('start') <= inner.get('start') \
-                <= outer.get('end')
+                        <= outer.get('end')
             ends_in = outer.get('start') <= inner.get('end') \
-                <= outer.get('end')
+                      <= outer.get('end')
             return starts_in and ends_in
 
         if not _differ(tokens):

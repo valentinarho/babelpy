@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
-from parser import parse
-from reader import read_txt_file
-from babelfy import BabelfyClient
+from .parser import parse
+from .reader import read_txt_file
+from .babelfy import BabelfyClient
 from pprint import pprint
 import sys
 import traceback
 try:
-    from config.config import API_KEY, LANG
+    from .config.config import API_KEY, LANG
 except:
     LANG = 'EN'
     API_KEY = None
@@ -22,7 +22,7 @@ if not API_KEY:
     if isinstance(API_KEY, str):
         API_KEY = API_KEY.decode('utf-8')
     elif not API_KEY:
-        print 'BabelFy API key is required.'
+        print('BabelFy API key is required.')
         sys.exit()
 
 # Get the input text from cmd-line or file.
@@ -33,10 +33,10 @@ elif args.get('text_file'):
     try:
         text = read_txt_file(filepath)
     except Exception as e:
-        print 'faild to read text'
+        print('faild to read text')
         sys.exit()
 else:
-    print 'need text data to babelfy. see --help option for usage.'
+    print('need text data to babelfy. see --help option for usage.')
     sys.exit()
 
 # Split the text into sentences.
@@ -90,7 +90,7 @@ for sentence in text_list:
 
 # Export to file.
 if args.get('export'):
-    from dump import dump_json
+    from .dump import dump_json
 
     # Get the filename from cmd-line args.
     dumppath = args.get('export')
@@ -119,28 +119,28 @@ if args.get('export'):
     try:
         dump_json(output_data, dumppath)
     except Exception as e:
-        print 'failed to write file'
+        print('failed to write file')
         traceback.print_exc()
 
 # Print to stdout.
 if args.get('print'):
 
     if args.get('entities'):
-        print '\nENTITIES'
+        print('\nENTITIES')
         for token in entities:
             pprint(token)
 
     if args.get('all_entities'):
-        print '\nALL ENTITIES'
+        print('\nALL ENTITIES')
         for token in all_entities:
             pprint(token)
 
     if args.get('merged_entities'):
-        print '\nMERGED ENTITIES'
+        print('\nMERGED ENTITIES')
         for token in merged_entities:
             pprint(token)
 
     if args.get('all_merged_entities'):
-        print '\nALL MERGED ENTITIES'
+        print('\nALL MERGED ENTITIES')
         for token in all_merged_entities:
             pprint(token)

@@ -139,40 +139,40 @@ merged_entities = [
 
 non_entities = [
     {
-        u'isEntity': False,
-        u'start': 9,
-        u'end': 10,
-        u'text': 'is',
+        'isEntity': False,
+        'start': 9,
+        'end': 10,
+        'text': 'is',
     },
     {
-        u'isEntity': False,
-        u'start': 12,
-        u'end': 15,
-        u'text': u'both',
+        'isEntity': False,
+        'start': 12,
+        'end': 15,
+        'text': 'both',
     },
     {
-        u'isEntity': False,
-        u'start': 17,
-        u'end': 17,
-        u'text': u'a',
+        'isEntity': False,
+        'start': 17,
+        'end': 17,
+        'text': 'a',
     },
     {
-        u'isEntity': False,
-        u'start': 56,
-        u'end': 58,
-        u'text': u'and',
+        'isEntity': False,
+        'start': 56,
+        'end': 58,
+        'text': 'and',
     },
     {
-        u'isEntity': False,
-        u'start': 60,
-        u'end': 60,
-        u'text': u'a',
+        'isEntity': False,
+        'start': 60,
+        'end': 60,
+        'text': 'a',
     },
     {
-        u'isEntity': False,
-        u'start': 78,
-        u'end': 78,
-        u'text': u'.',
+        'isEntity': False,
+        'start': 78,
+        'end': 78,
+        'text': '.',
     },
 ]
 
@@ -211,9 +211,9 @@ class BabelfyTestCase(unittest.TestCase):
             start = char_fragment.get('start')
             end = char_fragment.get('end')
             token['isEntity'] = True
-            token[u'start'] = start
-            token[u'end'] = end
-            token[u'text'] = unicode(txt[start: end+1])
+            token['start'] = start
+            token['end'] = end
+            token['text'] = str(txt[start: end+1])
 
         bc.babelfy(txt)
 
@@ -238,9 +238,9 @@ class BabelfyTestCase(unittest.TestCase):
             start = char_fragment.get('start')
             end = char_fragment.get('end')
             token['isEntity'] = True
-            token[u'start'] = start
-            token[u'end'] = end
-            token[u'text'] = unicode(txt[start: end+1])
+            token['start'] = start
+            token['end'] = end
+            token['text'] = str(txt[start: end+1])
 
         bc.babelfy(txt)
         data = data + non_entities
@@ -267,9 +267,9 @@ class BabelfyTestCase(unittest.TestCase):
             start = char_fragment.get('start')
             end = char_fragment.get('end')
             token['isEntity'] = True
-            token[u'start'] = start
-            token[u'end'] = end
-            token[u'text'] = unicode(txt[start: end+1])
+            token['start'] = start
+            token['end'] = end
+            token['text'] = str(txt[start: end+1])
 
         bc.babelfy(txt)
 
@@ -294,9 +294,9 @@ class BabelfyTestCase(unittest.TestCase):
             start = char_fragment.get('start')
             end = char_fragment.get('end')
             token['isEntity'] = True
-            token[u'start'] = start
-            token[u'end'] = end
-            token[u'text'] = unicode(txt[start: end+1])
+            token['start'] = start
+            token['end'] = end
+            token['text'] = str(txt[start: end+1])
 
         bc.babelfy(txt)
         data = data + non_entities
